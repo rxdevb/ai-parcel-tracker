@@ -1,0 +1,42 @@
+version: '3.8'
+
+services:
+  app:
+    build: .
+    ports:
+      - "5000:5000"
+    environment:
+      # Zmienne środowiskowe do przekazania do app.py
+      POSTGRES_DB: parcel_db
+      POSTGRES_USER: parcel_user
+      POSTGRES_PASSWORD: strongpassword
+      DB_HOST: db # Ważne: 'db' to nazwa serwisu bazy danych
+    volumes:
+      - .:/app 
+    # KLUCZOWA ZMIANA: Czekaj, aż baza danych zgłosi, że jest 'healthy' (zdrowa/gotowa)
+    depends_on:
+      db:
+        condition: service_healthy
+
+  db:
+    image: postgres:14-alpine
+    restart: always
+    environment:
+      # Konfiguracja danych dostępowych dla PostgreSQL
+      POSTGRES_USER: parcel_user
+      POSTGRES_PASSWORD: strongpassword
+      POSTGRES_DB: parcel_db
+    volumes:
+      - postgres_data:/var/lib/postgresql/data/
+    
+    # DODANA SEKCJA HEALTHCHECK: Definicja, jak sprawdzić, czy baza danych jest gotowa
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U parcel_user"] # Sprawdź, czy DB akceptuje połączenia
+      interval: 5s
+      timeout: 5s
+      retries: 5
+      start_period: 10s # Poczekaj 10s zanim zaczniesz sprawdzanie
+
+# Definicja wolumenu do zachowania danych bazy danych
+volumes:
+  postgres_data:
