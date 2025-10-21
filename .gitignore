@@ -1,0 +1,10 @@
+# Virtual Environment
+venv/
+*.pyc
+__pycache__/
+
+# Machine Learning / Docker
+model.pkl
+*.csv
+*.log
+.DS_Store
