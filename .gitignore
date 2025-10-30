@@ -1,10 +1,11 @@
+# Python
+__pycache__/
+*.pyc
+
 # Virtual Environment
 venv/
-*.pyc
-__pycache__/
+.venv/
 
-# Machine Learning / Docker
+# Machine Learning Artifacts
 model.pkl
 *.csv
-*.log
-.DS_Store
